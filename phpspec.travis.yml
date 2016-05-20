@@ -1,0 +1,15 @@
+suites:
+  default:
+    namespace: EcomDev\MagentoPsr6Bridge
+    psr4_prefix: EcomDev\MagentoPsr6Bridge
+    src_path: %paths.config%/src
+    spec_path: %paths.config%
+
+formatter.name: pretty
+
+code_coverage:
+  format: clover
+  output: build/coverage.xml
+
+extensions:
+  - PhpSpec\Extension\CodeCoverageExtension
