@@ -18,6 +18,7 @@ before_script:
 
 script:
   - bin/phpcs
+  - bin/phpmd src/ text cleancode,controversial,design,naming,codesize
   - bin/phpspec run --config phpspec.travis.yml
 
 after_script:

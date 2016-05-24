@@ -2,14 +2,75 @@
 
 namespace EcomDev\MagentoPsr6Bridge;
 
+use Magento\Framework\Cache\FrontendInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use EcomDev\MagentoPsr6Bridge\CacheItemFactory;
 
 /**
  * Concrete cache item pool implementation
  */
 class CacheItemPool implements CacheItemPoolInterface
 {
+
+    /**
+     * Magento cache frontend interface
+     *
+     * @var FrontendInterface
+     */
+    private $cacheFrontend;
+
+    /**
+     * Factory for crating of cache item instances
+     *
+     * @var CacheItemFactory
+     */
+    private $cacheItemFactory;
+
+    /**
+     * List of cache tags to be assigned
+     * to every cache entry saved with this pool
+     *
+     * @var string[]
+     */
+    private $tags;
+
+    /**
+     * Key prefix for your cache keys
+     *
+     * @var string
+     */
+    private $keyPrefix;
+
+    /**
+     * Items that are scheduled for deferred save process
+     *
+     * @var CacheItemInterface[]
+     */
+    private $defferedItems = [];
+
+    /**
+     * Configures Cache Item Pool Dependencies
+     *
+     * @param CacheItemFactory $cacheItemFactory
+     * @param FrontendInterface $cacheFrontend
+     * @param string $keyPrefix
+     * @param \string[] $tags
+     */
+    public function __construct(
+        CacheItemFactory $cacheItemFactory,
+        FrontendInterface $cacheFrontend,
+        $keyPrefix,
+        array $tags = []
+    ) {
+    
+        $this->cacheFrontend = $cacheFrontend;
+        $this->cacheItemFactory = $cacheItemFactory;
+        $this->tags = $tags;
+        $this->keyPrefix = $keyPrefix;
+    }
+
+
     /**
      * Returns a Cache Item representing the specified key.
      *
@@ -28,7 +89,16 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function getItem($key)
     {
-        // TODO Write spec, implement method
+        $cacheEntry = $this->cacheFrontend->load(
+            $this->prepareKey($key)
+        );
+
+        if ($cacheEntry !== false) {
+            $cacheEntry = unserialize($cacheEntry);
+            return $this->cacheItemFactory->create(['key' => $key, 'isHit' => true, 'value' => $cacheEntry]);
+        }
+
+        return $this->cacheItemFactory->create(['key' => $key, 'isHit' => false]);
     }
 
     /**
@@ -49,7 +119,13 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function getItems(array $keys = array())
     {
-        // TODO Write spec, implement method
+        $result = [];
+
+        foreach ($keys as $key) {
+            $result[$key] = $this->getItem($key);
+        }
+
+        return $result;
     }
 
     /**
@@ -71,7 +147,11 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function hasItem($key)
     {
-        // TODO Write spec, implement method
+        if ($this->cacheFrontend->load($this->prepareKey($key)) !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -82,7 +162,11 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function clear()
     {
-        // TODO Write spec, implement method
+        if (empty($this->tags)) {
+            return false;
+        }
+
+        return $this->cacheFrontend->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, $this->tags);
     }
 
     /**
@@ -158,5 +242,17 @@ class CacheItemPool implements CacheItemPoolInterface
     public function commit()
     {
         // TODO Write spec, implement method
+    }
+
+    /**
+     * Prepares a key for cache storage
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    private function prepareKey($key)
+    {
+        return $this->keyPrefix . $key;
     }
 }

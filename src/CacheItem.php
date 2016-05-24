@@ -23,6 +23,43 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
     private $cacheLifetime;
 
     /**
+     * Cache key
+     *
+     * @var string
+     */
+    private $key;
+
+    /**
+     * Flag for cache hit
+     *
+     * @var bool
+     */
+    private $isHit;
+
+    /**
+     * Cached value
+     *
+     * @var mixed
+     */
+    private $value;
+
+    /**
+     * Cache item constructor
+     *
+     * @param string $key
+     * @param bool $isHit
+     * @param mixed $value
+     */
+    public function __construct($key, $isHit, $value = null)
+    {
+        $this->key = $key;
+        $this->isHit = $isHit;
+        if ($this->isHit) {
+            $this->value = $value;
+        }
+    }
+
+    /**
      * Returns the key for the current cache item.
      *
      * The key is loaded by the Implementing Library, but should be available to
@@ -33,7 +70,7 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
      */
     public function getKey()
     {
-        // TODO Write spec, implement method
+        return $this->key;
     }
 
     /**
@@ -50,7 +87,7 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
      */
     public function get()
     {
-        // TODO Write spec, implement method
+        return $this->value;
     }
 
     /**
@@ -64,7 +101,7 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
      */
     public function isHit()
     {
-        // TODO Write spec, implement method
+        return $this->isHit;
     }
 
     /**
@@ -82,7 +119,8 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
      */
     public function set($value)
     {
-        // TODO Write spec, implement method
+        $this->value = $value;
+        return $this;
     }
 
     /**

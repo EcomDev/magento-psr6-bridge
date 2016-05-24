@@ -13,3 +13,4 @@ code_coverage:
 
 extensions:
   - PhpSpec\Extension\CodeCoverageExtension
+  - EcomDev\PHPSpec\MagentoDiAdapter\Extension

@@ -7,3 +7,4 @@ suites:
 formatter.name: nyan.cat
 extensions:
   - PhpSpec\NyanFormattersExtension\Extension
+  - EcomDev\PHPSpec\MagentoDiAdapter\Extension

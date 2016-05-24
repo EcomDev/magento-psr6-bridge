@@ -4,6 +4,8 @@ namespace EcomDev\MagentoPsr6Bridge;
 
 /**
  * Invalid argument exception implementation
+ *
+ * Generates error message based on passed cache key
  */
 class InvalidArgumentException extends \InvalidArgumentException implements \Psr\Cache\InvalidArgumentException
 {
