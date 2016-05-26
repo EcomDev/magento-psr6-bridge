@@ -1,9 +1,24 @@
 <?php
+/**
+ * Magento PSR-6 Bridge
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @copyright  Copyright (c) 2016 EcomDev BV (http://www.ecomdev.org)
+ * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Ivan Chepurnyi <ivan@ecomdev.org>
+ */
 
 namespace spec\EcomDev\MagentoPsr6Bridge;
 
+use EcomDev\MagentoPsr6Bridge\CacheItem;
+use EcomDev\MagentoPsr6Bridge\InvalidArgumentException;
 use Magento\Framework\Cache\FrontendInterface;
-use Magento\Framework\ObjectManager\FactoryInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use EcomDev\MagentoPsr6Bridge\CacheItemFactory;
@@ -64,6 +79,26 @@ class CacheItemPoolSpec extends ObjectBehavior
 
         $this->getItem('key1')->shouldReturn($cacheItem);
     }
+
+    function it_allows_cache_key_with_dash(CacheItemInterface $cacheItem)
+    {
+        $this->cacheFrontend->load('prefix_key_1')
+            ->willReturn(false)
+            ->shouldBeCalled();
+
+        $this->cacheItemFactory
+            ->create(['key' => 'key-1', 'isHit' => false])
+            ->willReturn($cacheItem)
+            ->shouldBeCalled();
+
+        $this->getItem('key-1')->shouldReturn($cacheItem);
+    }
+
+    function it_does_not_accept_not_compliant_cache_keys()
+    {
+        $this->shouldThrow(new InvalidArgumentException('$invalid#'))->duringGetItem('$invalid#');
+    }
+
 
     function it_returns_multiple_cache_items(CacheItemInterface $cacheItemOne, CacheItemInterface $cacheItemTwo)
     {
@@ -128,4 +163,128 @@ class CacheItemPoolSpec extends ObjectBehavior
 
         $this->clear()->shouldReturn(false);
     }
+
+    function it_removes_item_by_id()
+    {
+        $this->cacheFrontend->remove('prefix_key1')->willReturn(true)->shouldBeCalled();
+
+        $this->deleteItem('key1')->shouldReturn(true);
+    }
+
+    function it_removes_multiple_items_by_ids_only_when_the_whole_sequence_work()
+    {
+        $this->cacheFrontend->remove('prefix_key1')->willReturn(true)->shouldBeCalled();
+        $this->cacheFrontend->remove('prefix_key2')->willReturn(false)->shouldBeCalled();
+        $this->cacheFrontend->remove('prefix_key3')->shouldNotBeCalled();
+
+        $this->deleteItems(['key1', 'key2', 'key3'])->shouldReturn(false);
+    }
+
+    function it_removes_all_items_by_ids()
+    {
+        $this->cacheFrontend->remove('prefix_key1')->willReturn(true)->shouldBeCalled();
+        $this->cacheFrontend->remove('prefix_key2')->willReturn(true)->shouldBeCalled();
+        $this->cacheFrontend->remove('prefix_key3')->willReturn(true)->shouldBeCalled();
+
+        $this->deleteItems(['key1', 'key2', 'key3'])->shouldReturn(true);
+    }
+
+    function it_saves_item_without_expiration_extraction_interface(CacheItemInterface $cacheItem)
+    {
+        $cacheItem->get()->willReturn([1, 2, 3])->shouldBeCalled();
+        $cacheItem->getKey()->willReturn('key1')->shouldBeCalled();
+
+        $this->cacheFrontend
+            ->save(serialize([1, 2, 3]), 'prefix_key1', ['tag1', 'tag2'], null)
+            ->willReturn(true)
+            ->shouldBeCalled();
+
+        $this->save($cacheItem)->shouldReturn(true);
+    }
+
+    function it_saves_item_with_expiration_time(CacheItem $cacheItem)
+    {
+        $cacheItem->get()->willReturn([1, 2, 3])->shouldBeCalled();
+        $cacheItem->getKey()->willReturn('key1')->shouldBeCalled();
+        $cacheItem->getCacheLifetime()->willReturn(3600)->shouldBeCalled();
+
+        $this->cacheFrontend
+            ->save(serialize([1, 2, 3]), 'prefix_key1', ['tag1', 'tag2'], 3600)
+            ->willReturn(true)
+            ->shouldBeCalled();
+
+        $this->save($cacheItem)->shouldReturn(true);
+    }
+    
+    function it_returns_false_if_save_failes(CacheItemInterface $cacheItem)
+    {
+        $cacheItem->get()->willReturn([1, 2, 3])->shouldBeCalled();
+        $cacheItem->getKey()->willReturn('key1')->shouldBeCalled();
+
+        $this->cacheFrontend
+            ->save(serialize([1, 2, 3]), 'prefix_key1', ['tag1', 'tag2'], null)
+            ->willReturn(false)
+            ->shouldBeCalled();
+
+        $this->save($cacheItem)->shouldReturn(false);
+    }
+
+    function it_schedules_cache_item_save_but_not_saves(CacheItemInterface $cacheItem)
+    {
+        $cacheItem->get()->shouldNotBeCalled();
+        $cacheItem->getKey()->shouldNotBeCalled();
+
+        $this->saveDeferred($cacheItem)->shouldReturn(true);
+    }
+
+    function it_schedules_cache_item_save_and_saves_on_commit(
+        CacheItemInterface $cacheItemOne,
+        CacheItemInterface $cacheItemTwo
+    )
+    {
+        $cacheItemOne->get()->willReturn([1, 2, 3])->shouldBeCalled();
+        $cacheItemOne->getKey()->willReturn('key1')->shouldBeCalled();
+
+        $cacheItemTwo->get()->willReturn([4, 5, 6])->shouldBeCalled();
+        $cacheItemTwo->getKey()->willReturn('key2')->shouldBeCalled();
+
+        $this->cacheFrontend
+            ->save(serialize([1, 2, 3]), 'prefix_key1', ['tag1', 'tag2'], null)
+            ->willReturn(true)
+            ->shouldBeCalled();
+
+
+        $this->cacheFrontend
+            ->save(serialize([4, 5, 6]), 'prefix_key2', ['tag1', 'tag2'], null)
+            ->willReturn(true)
+            ->shouldBeCalled();
+
+        $this->saveDeferred($cacheItemOne)->shouldReturn(true);
+        $this->saveDeferred($cacheItemTwo)->shouldReturn(true);
+
+        $this->commit()->shouldReturn(true);
+    }
+
+    function it_commits_deferred_cache_items_only_onces(
+        CacheItemInterface $cacheItem
+    )
+    {
+        $cacheItem->get()->willReturn([1, 2, 3])->shouldBeCalledTimes(1);
+        $cacheItem->getKey()->willReturn('key1')->shouldBeCalledTimes(1);
+
+
+        $this->cacheFrontend
+            ->save(serialize([1, 2, 3]), 'prefix_key1', ['tag1', 'tag2'], null)
+            ->willReturn(true)
+            ->shouldBeCalledTimes(1);
+
+
+        $this->saveDeferred($cacheItem)->shouldReturn(true);
+
+        $this->commit()->shouldReturn(true);
+        
+        // This time nothing should happen
+        $this->commit()->shouldReturn(true);
+    }
+
 }

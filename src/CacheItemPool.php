@@ -1,4 +1,18 @@
 <?php
+/**
+ * Magento PSR-6 Bridge
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @copyright  Copyright (c) 2016 EcomDev BV (http://www.ecomdev.org)
+ * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author     Ivan Chepurnyi <ivan@ecomdev.org>
+ */
 
 namespace EcomDev\MagentoPsr6Bridge;
 
@@ -184,7 +198,9 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function deleteItem($key)
     {
-        // TODO Write spec, implement method
+        return $this->cacheFrontend->remove(
+            $this->prepareKey($key)
+        );
     }
 
     /**
@@ -202,7 +218,13 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function deleteItems(array $keys)
     {
-        // TODO Write spec, implement method
+        foreach ($keys as $key) {
+            if (!$this->deleteItem($key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -213,10 +235,23 @@ class CacheItemPool implements CacheItemPoolInterface
      *
      * @return bool
      *   True if the item was successfully persisted. False if there was an error.
+     *
+     * @throws InvalidArgumentException
      */
     public function save(CacheItemInterface $item)
     {
-        // TODO Write spec, implement method
+        $expirationTime = null;
+
+        if ($item instanceof ExtractableCacheLifetimeInterface) {
+            $expirationTime = $item->getCacheLifetime();
+        }
+
+        return $this->cacheFrontend->save(
+            serialize($item->get()),
+            $this->prepareKey($item->getKey()),
+            $this->tags,
+            $expirationTime
+        );
     }
 
     /**
@@ -230,7 +265,8 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function saveDeferred(CacheItemInterface $item)
     {
-        // TODO Write spec, implement method
+        $this->defferedItems[] = $item;
+        return true;
     }
 
     /**
@@ -241,7 +277,12 @@ class CacheItemPool implements CacheItemPoolInterface
      */
     public function commit()
     {
-        // TODO Write spec, implement method
+        foreach ($this->defferedItems as $item) {
+            $this->save($item);
+        }
+
+        $this->defferedItems = [];
+        return true;
     }
 
     /**
@@ -250,9 +291,15 @@ class CacheItemPool implements CacheItemPoolInterface
      * @param string $key
      *
      * @return string
+     *
+     * @throws InvalidArgumentException
      */
     private function prepareKey($key)
     {
-        return $this->keyPrefix . $key;
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $key)) {
+            throw new InvalidArgumentException($key);
+        }
+
+        return $this->keyPrefix . strtr($key, '-', '_');
     }
 }
