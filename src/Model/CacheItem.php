@@ -14,9 +14,10 @@
  * @author    Ivan Chepurnyi <ivan@ecomdev.org>
  */
 
-namespace EcomDev\MagentoPsr6Bridge;
+namespace EcomDev\MagentoPsr6Bridge\Model;
 
 use Psr\Cache\CacheItemInterface;
+use EcomDev\MagentoPsr6Bridge\ExtractableCacheLifetimeInterface;
 
 /**
  * Concrete cache item implementation

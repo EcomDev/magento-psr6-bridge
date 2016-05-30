@@ -14,14 +14,14 @@
  * @author     Ivan Chepurnyi <ivan@ecomdev.org>
  */
 
-namespace spec\EcomDev\MagentoPsr6Bridge;
+namespace spec\EcomDev\MagentoPsr6Bridge\Model;
 
-use EcomDev\MagentoPsr6Bridge\CacheItem;
+use EcomDev\MagentoPsr6Bridge\Model\CacheItem;
 use EcomDev\MagentoPsr6Bridge\InvalidArgumentException;
 use Magento\Framework\Cache\FrontendInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use EcomDev\MagentoPsr6Bridge\CacheItemFactory;
+use EcomDev\MagentoPsr6Bridge\Model\CacheItemFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

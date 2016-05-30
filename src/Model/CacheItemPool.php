@@ -14,12 +14,14 @@
  * @author    Ivan Chepurnyi <ivan@ecomdev.org>
  */
 
-namespace EcomDev\MagentoPsr6Bridge;
+namespace EcomDev\MagentoPsr6Bridge\Model;
 
 use Magento\Framework\Cache\FrontendInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use EcomDev\MagentoPsr6Bridge\CacheItemFactory;
+use EcomDev\MagentoPsr6Bridge\Model\CacheItemFactory;
+use EcomDev\MagentoPsr6Bridge\ExtractableCacheLifetimeInterface;
+use EcomDev\MagentoPsr6Bridge\InvalidArgumentException;
 
 /**
  * Concrete cache item pool implementation

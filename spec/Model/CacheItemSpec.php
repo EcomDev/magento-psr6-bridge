@@ -14,7 +14,7 @@
  * @author     Ivan Chepurnyi <ivan@ecomdev.org>
  */
 
-namespace spec\EcomDev\MagentoPsr6Bridge;
+namespace spec\EcomDev\MagentoPsr6Bridge\Model;
 
 use Psr\Cache\CacheItemInterface;
 use PhpSpec\ObjectBehavior;
