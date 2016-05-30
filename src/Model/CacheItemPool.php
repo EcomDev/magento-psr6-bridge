@@ -28,6 +28,12 @@ use EcomDev\MagentoPsr6Bridge\InvalidArgumentException;
  */
 class CacheItemPool implements CacheItemPoolInterface
 {
+    /**
+     * Default cache tag for every entry
+     *
+     * @var string
+     */
+    const DEFAULT_CACHE_TAG = 'PSR6_CACHE';
 
     /**
      * Magento cache frontend interface

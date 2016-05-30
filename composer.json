@@ -30,7 +30,10 @@
     "autoload": {
         "psr-4": {
             "EcomDev\\MagentoPsr6Bridge\\": "src/"
-        }
+        },
+        "files": [
+            "src/registration.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

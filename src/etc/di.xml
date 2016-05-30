@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento PSR-6 Bridge
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @copyright Copyright (c) 2016 EcomDev BV (http://www.ecomdev.org)
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author    Ivan Chepurnyi <ivan@ecomdev.org>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Psr\Cache\CacheItemPoolInterface" type="EcomDev\MagentoPsr6Bridge\Model\CacheItemPool" />
+    <preference for="EcomDev\CacheKey\GeneratorInterface" type="EcomDev\CacheKey\Generator" />
+
+    <type name="EcomDev\MagentoPsr6Bridge\Model\CacheItemPool" shared="true">
+        <arguments>
+            <argument name="cacheFrontend" xsi:type="object">ecomdevMagentoPsr6BridgeCacheFrontend</argument>
+            <argument name="keyPrefix" xsi:type="string">psr6_</argument>
+        </arguments>
+    </type>
+
+    <type name="EcomDev\CacheKey\Generator" shared="true">
+        <arguments>
+            <argument name="normalizer" xsi:type="object">EcomDev\CacheKey\Normalizer\Psr6Normalizer</argument>
+            <argument name="converter" xsi:type="object">ecomdevCacheKeyGeneratorConverter</argument>
+        </arguments>
+    </type>
+
+    <type name="EcomDev\CacheKey\Converter\KeyValueConverter">
+        <arguments>
+            <argument name="converter" xsi:type="object">EcomDev\CacheKey\Converter\ScalarConverter</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="ecomdevCacheKeyGeneratorConverter" type="EcomDev\CacheKey\ConverterChain">
+        <arguments>
+            <argument name="chain" xsi:type="array">
+                <item name="key_value" xsi:type="object">EcomDev\CacheKey\Converter\KeyValueConverter</item>
+                <item name="hash" xsi:type="object">EcomDev\CacheKey\Converter\HashConverter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="ecomdevMagentoPsr6BridgeCacheFrontend"
+                 shared="true"
+                 type="Magento\Framework\Cache\Frontend\Decorator\TagScope">
+        <arguments>
+            <argument name="tag" xsi:type="const">EcomDev\MagentoPsr6Bridge\Model\CacheItemPool::DEFAULT_CACHE_TAG</argument>
+        </arguments>
+    </virtualType>
+
+</config>
