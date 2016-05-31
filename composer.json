@@ -1,0 +1,52 @@
+{
+    "name": "ecomdev/magento-psr6-bridge",
+    "description": "A bridge between Magento framework and PSR-6 cache compatible libraries.",
+    "type": "magento2-module",
+    "require": {
+        "php": "~5.6|>=7.0",
+        "psr/cache": "^1.0",
+        "ecomdev/cache-key": "^1.1"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^2.4",
+        "squizlabs/php_codesniffer": "*",
+        "phpmd/phpmd": "^2.3",
+        "satooshi/php-coveralls": "dev-master",
+        "mikey179/vfsStream": "^1.6",
+        "henrikbjorn/phpspec-code-coverage": "^2.0",
+        "phpspec/nyan-formatters": "^1.0",
+        "ecomdev/phpspec-magento-di-adapter": "~0.1",
+        "magento/zendframework1": "*"
+    },
+    "version": "0.1.0",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Ivan Chepurnyi",
+            "email": "ivan@ecomdev.org"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "EcomDev\\MagentoPsr6Bridge\\": "src/"
+        },
+        "files": [
+            "src/registration.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "spec\\EcomDev\\MagentoPsr6Bridge\\": "spec/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "repositories": {
+        "magento": {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    }
+}
