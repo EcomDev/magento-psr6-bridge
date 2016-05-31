@@ -13,6 +13,9 @@ No unreleased changes yet
 - `CacheItem::get()` method now ALWAYS returns `null` when `isHit()` returns false. 
 - `CacheItemPool::save()` and `CacheItemPool::saveDeferred()` now supports additionally CacheItems that implement `ExtractableCacheValueInterface` with a fallback to previous implementation, that was relying on `CacheItem::get()` 
 
+## Fixed
+- Fixed version in `module.xml` file, as it was not matching one in composer.json.
+
 ## 0.1.0
 ### Added
 - PSR-6 Implementation
