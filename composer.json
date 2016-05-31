@@ -18,7 +18,7 @@
         "ecomdev/phpspec-magento-di-adapter": "~0.1",
         "magento/zendframework1": "*"
     },
-    "version": "0.1.0",
+    "version": "0.2.0",
     "license": "OSL-3.0",
     "authors": [
         {
