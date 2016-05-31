@@ -16,6 +16,7 @@
 
 namespace EcomDev\MagentoPsr6Bridge\Model;
 
+use EcomDev\MagentoPsr6Bridge\ExtractableCacheValueInterface;
 use Psr\Cache\CacheItemInterface;
 use EcomDev\MagentoPsr6Bridge\ExtractableCacheLifetimeInterface;
 
@@ -28,7 +29,10 @@ use EcomDev\MagentoPsr6Bridge\ExtractableCacheLifetimeInterface;
  * you must explicitly call cache pool save()
  * or saveDeferred() on a cache pool
  */
-class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
+class CacheItem implements
+    CacheItemInterface,
+    ExtractableCacheLifetimeInterface,
+    ExtractableCacheValueInterface
 {
     /**
      * Cache life time of the entry
@@ -69,9 +73,7 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
     {
         $this->key = $key;
         $this->isHit = $isHit;
-        if ($this->isHit) {
-            $this->value = $value;
-        }
+        $this->value = $value;
     }
 
     /**
@@ -102,7 +104,7 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
      */
     public function get()
     {
-        return $this->value;
+        return $this->isHit() ? $this->value : null;
     }
 
     /**
@@ -195,5 +197,15 @@ class CacheItem implements CacheItemInterface, ExtractableCacheLifetimeInterface
     public function getCacheLifetime()
     {
         return $this->cacheLifetime;
+    }
+
+    /**
+     * Returns cache value, that was set or loaded before
+     *
+     * @return mixed|null
+     */
+    public function getCacheValue()
+    {
+        return $this->value;
     }
 }

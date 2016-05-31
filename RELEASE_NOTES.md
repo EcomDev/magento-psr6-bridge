@@ -3,7 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-No changes yet
+### Added
+- Interface for extracting raw cache value `ExtractableCacheValueInterface`
+
+### Changed
+- `CacheItem::get()` method now ALWAYS returns `null` when `isHit()` returns false. 
+- `CacheItemPool::save()` and `CacheItemPool::saveDeferred()` now supports additionally CacheItems that implement `ExtractableCacheValueInterface` with a fallback to previous implementation, that was relying on `CacheItem::get()` 
 
 ## 0.1.0
 ### Added

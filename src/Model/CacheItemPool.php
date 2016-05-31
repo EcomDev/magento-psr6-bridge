@@ -16,6 +16,7 @@
 
 namespace EcomDev\MagentoPsr6Bridge\Model;
 
+use EcomDev\MagentoPsr6Bridge\ExtractableCacheValueInterface;
 use Magento\Framework\Cache\FrontendInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -255,7 +256,11 @@ class CacheItemPool implements CacheItemPoolInterface
         }
 
         return $this->cacheFrontend->save(
-            serialize($item->get()),
+            serialize((
+                $item instanceof ExtractableCacheValueInterface ?
+                    $item->getCacheValue() :
+                    $item->get()
+            )),
             $this->prepareKey($item->getKey()),
             $this->tags,
             $expirationTime

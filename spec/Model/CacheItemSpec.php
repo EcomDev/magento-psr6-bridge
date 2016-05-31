@@ -16,6 +16,8 @@
 
 namespace spec\EcomDev\MagentoPsr6Bridge\Model;
 
+use EcomDev\MagentoPsr6Bridge\ExtractableCacheLifetimeInterface;
+use EcomDev\MagentoPsr6Bridge\ExtractableCacheValueInterface;
 use Psr\Cache\CacheItemInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -30,6 +32,16 @@ class CacheItemSpec extends ObjectBehavior
     function it_should_implement_cache_item_interface()
     {
         $this->shouldImplement(CacheItemInterface::class);
+    }
+
+    function it_should_implement_extractable_cache_lifetime_interface()
+    {
+        $this->shouldImplement(ExtractableCacheLifetimeInterface::class);
+    }
+
+    function it_should_implement_extractable_cache_value_interface()
+    {
+        $this->shouldImplement(ExtractableCacheValueInterface::class);
     }
 
     function it_returns_key_that_was_passed_in_constructor()
@@ -63,6 +75,26 @@ class CacheItemSpec extends ObjectBehavior
     {
         $this->set('some_cache_value')->shouldReturn($this);
         $this->get()->shouldReturn('some_cache_value');
+    }
+
+    function it_should_return_null_if_it_is_not_hit()
+    {
+        $this->beConstructedWith('key1', false);
+        $this->set('some_cache_value')->shouldReturn($this);
+        $this->get()->shouldReturn(null);
+    }
+
+    function it_returns_same_value_that_was_set_before_via_special_method()
+    {
+        $this->beConstructedWith('key1', false);
+        $this->set('some_cache_value')->shouldReturn($this);
+        $this->getCacheValue()->shouldReturn('some_cache_value');
+    }
+
+    function it_returns_same_value_that_was_passed_in_constructor_even_on_cache_miss()
+    {
+        $this->beConstructedWith('key1', false, 'some_cache_value');
+        $this->getCacheValue()->shouldReturn('some_cache_value');
     }
 
     function it_does_not_have_any_cache_lifetime_set_by_default()

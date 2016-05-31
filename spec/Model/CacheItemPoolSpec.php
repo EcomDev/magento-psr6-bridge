@@ -202,9 +202,10 @@ class CacheItemPoolSpec extends ObjectBehavior
         $this->save($cacheItem)->shouldReturn(true);
     }
 
-    function it_saves_item_with_expiration_time(CacheItem $cacheItem)
+    function it_saves_item_with_expiration_time_and_value_provided_from_another_method(CacheItem $cacheItem)
     {
-        $cacheItem->get()->willReturn([1, 2, 3])->shouldBeCalled();
+        $cacheItem->get()->shouldNotBeCalled();
+        $cacheItem->getCacheValue()->willReturn([1, 2, 3])->shouldBeCalled();
         $cacheItem->getKey()->willReturn('key1')->shouldBeCalled();
         $cacheItem->getCacheLifetime()->willReturn(3600)->shouldBeCalled();
 
