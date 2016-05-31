@@ -19,14 +19,14 @@
     <preference for="Psr\Cache\CacheItemPoolInterface" type="EcomDev\MagentoPsr6Bridge\Model\CacheItemPool" />
     <preference for="EcomDev\CacheKey\GeneratorInterface" type="EcomDev\CacheKey\Generator" />
 
-    <type name="EcomDev\MagentoPsr6Bridge\Model\CacheItemPool" shared="true">
+    <type name="EcomDev\MagentoPsr6Bridge\Model\CacheItemPool">
         <arguments>
             <argument name="cacheFrontend" xsi:type="object">EcomDev\MagentoPsr6Bridge\Model\CacheType</argument>
             <argument name="keyPrefix" xsi:type="string">psr6_</argument>
         </arguments>
     </type>
 
-    <type name="EcomDev\CacheKey\Generator" shared="true">
+    <type name="EcomDev\CacheKey\Generator">
         <arguments>
             <argument name="normalizer" xsi:type="object">EcomDev\CacheKey\Normalizer\Psr6Normalizer</argument>
             <argument name="converter" xsi:type="object">ecomdevCacheKeyGeneratorConverter</argument>

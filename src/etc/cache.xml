@@ -16,7 +16,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
-    <type name="psr6_cache" translate="label,description" instance="EcomDev\MagentoPsr6Bridge\Model\CacheType">
+    <type name="psr6" translate="label,description" instance="EcomDev\MagentoPsr6Bridge\Model\CacheType">
         <label>PRS-6 Cache</label>
         <description>Cache added by PSR-6 compatible components</description>
     </type>
