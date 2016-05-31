@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Magento PSR-6 Bridge
  *
@@ -14,7 +13,22 @@
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @author    Ivan Chepurnyi <ivan@ecomdev.org>
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="EcomDev_MagentoPsr6Bridge" setup_version="0.2.0" />
-</config>
+
+namespace EcomDev\MagentoPsr6Bridge;
+
+/**
+ * Interface provides a possibility
+ * to extract cache value from cache item
+ *
+ * In default PSR-6 implementation, there are some setters
+ * but no retrieval of value after it was set
+ */
+interface ExtractableCacheValueInterface
+{
+    /**
+     * Returns cache value, that was set or loaded before
+     *
+     * @return mixed|null
+     */
+    public function getCacheValue();
+}
