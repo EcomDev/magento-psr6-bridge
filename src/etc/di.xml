@@ -21,7 +21,7 @@
 
     <type name="EcomDev\MagentoPsr6Bridge\Model\CacheItemPool" shared="true">
         <arguments>
-            <argument name="cacheFrontend" xsi:type="object">ecomdevMagentoPsr6BridgeCacheFrontend</argument>
+            <argument name="cacheFrontend" xsi:type="object">EcomDev\MagentoPsr6Bridge\Model\CacheType</argument>
             <argument name="keyPrefix" xsi:type="string">psr6_</argument>
         </arguments>
     </type>
@@ -47,13 +47,4 @@
             </argument>
         </arguments>
     </virtualType>
-
-    <virtualType name="ecomdevMagentoPsr6BridgeCacheFrontend"
-                 shared="true"
-                 type="Magento\Framework\Cache\Frontend\Decorator\TagScope">
-        <arguments>
-            <argument name="tag" xsi:type="const">EcomDev\MagentoPsr6Bridge\Model\CacheItemPool::DEFAULT_CACHE_TAG</argument>
-        </arguments>
-    </virtualType>
-
 </config>

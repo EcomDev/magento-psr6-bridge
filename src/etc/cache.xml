@@ -16,8 +16,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
-    <!-- Cache type is using virtualType instance in order to attach a tag to each PSR-6 pool created item -->
-    <type name="psr6_cache" translate="label,description" instance="ecomdevMagentoPsr6BridgeCacheFrontend">
+    <type name="psr6_cache" translate="label,description" instance="EcomDev\MagentoPsr6Bridge\Model\CacheType">
         <label>PRS-6 Cache</label>
         <description>Cache added by PSR-6 compatible components</description>
     </type>
