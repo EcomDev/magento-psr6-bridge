@@ -84,12 +84,14 @@ Then you might find it convenient to use additional custom cache tags so items w
             if ($item->isHit()) {
                 return sprintf('Cached: %s', $item->get());
             }
+            
+            $value = 'Value for cache';
     
-            $item->set('Value for cache');
+            $item->set($value);
     
             $this->cacheItemPool->save($item);
             
-            return sprintf('Not cached: %s', $item->get());
+            return sprintf('Not cached: %s', $value);
         }
         
         public function invalidate()
@@ -143,11 +145,12 @@ class Item implements InfoProviderInterface
             return sprintf('Cached: %s', $item->get());
         }
 
-        $item->set('Value for cache');
+        $value = 'Value for cache';
+        $item->set($value);
 
         $this->cacheItemPool->save($item);
         
-        return sprintf('Not cached: %s', $item->get());
+        return sprintf('Not cached: %s', $value);
     }
 }
 ```
