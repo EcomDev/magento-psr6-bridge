@@ -3,7 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-No unreleased changes yet
+### Fixed
+- Fixed issue with README.md code example, that uses wrong method for cached data retrieval.
 
 ## [0.2.0]
 ### Added
@@ -13,7 +14,7 @@ No unreleased changes yet
 - `CacheItem::get()` method now ALWAYS returns `null` when `isHit()` returns false. 
 - `CacheItemPool::save()` and `CacheItemPool::saveDeferred()` now supports additionally CacheItems that implement `ExtractableCacheValueInterface` with a fallback to previous implementation, that was relying on `CacheItem::get()` 
 
-## Fixed
+### Fixed
 - Fixed version in `module.xml` file, as it was not matching one in composer.json.
 
 ## 0.1.0
